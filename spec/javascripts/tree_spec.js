@@ -75,18 +75,18 @@ describe("Tree Functions", function() {
     });
   });
   
-  describe("#delete", function() {
+  describe("#remove", function() {
     beforeEach(function() {
       root = _w.insert(null, 'education');
     });
     
-    it("should delete a root node", function() {
-      expect(_w.delete(root, 'education')).toBeNull();
+    it("should remove a root node", function() {
+      expect(_w.remove(root, 'education')).toBeNull();
     });
     
-    it("should delete a child node", function() {
+    it("should remove a child node", function() {
       root = _w.insert(root, 'functionalism');
-      root = _w.delete(root, 'functionalism');
+      root = _w.remove(root, 'functionalism');
       expect(root).not.toBeNull();
       expect(root.data).toEqual('education');
       expect(root.right).toBeNull();
@@ -101,16 +101,16 @@ describe("Tree Functions", function() {
       expect(root.left.data).toEqual('agronomy');
       expect(root.data).toEqual('detente');
       expect(root.right.data).toEqual('education');
-      root = _w.delete(root, 'education');
+      root = _w.remove(root, 'education');
       expect(root.right).toBeNull();
       
-      root = _w.delete(root, 'detente');
+      root = _w.remove(root, 'detente');
       expect(root.left).toBeNull();
       expect(root.data).toEqual('agronomy');
       
       root = _w.insert(root, 'functionalism');
       expect(root.right.data).toEqual('functionalism');
-      root = _w.delete(root, 'agronomy')
+      root = _w.remove(root, 'agronomy')
       expect(root.data).toEqual('functionalism');
       expect(root.left).toBeNull();
       expect(root.right).toBeNull();
@@ -122,7 +122,7 @@ describe("Tree Functions", function() {
       });
       expect(root.data).toEqual('education');
       
-      root = _w.delete(root, 'education');
+      root = _w.remove(root, 'education');
       
       expect(root.data).toEqual('detente');
       expect(root.left).toBeNull();
@@ -135,7 +135,7 @@ describe("Tree Functions", function() {
       });
       expect(root.data).toEqual('horosho');
       
-      root = _w.delete(root, 'horosho');
+      root = _w.remove(root, 'horosho');
       expect(root.data).toEqual('glasnost');
     });
   });

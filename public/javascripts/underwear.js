@@ -40,8 +40,8 @@
   }
   
   function printNode(node, depth) {
-    if (node === null) return '';
-    if (depth == 0) return node.data ? node.data + node.level.toString() : '';
+    if (node === null) { return ''; }
+    if (depth === 0) { return node.data ? node.data + node.level.toString() : ''; }
     return '(' + ([printNode(node.left, depth - 1), printNode(node, 0), printNode(node.right, depth - 1)].join('-')) + ')';
   }
   
@@ -50,7 +50,7 @@
   }
   
   function skew(node) {
-    if (node !== null && node.left != null && node.level == node.left.level) {
+    if (node !== null && node.left !== null && node.level == node.left.level) {
       var left = node.left;
       node.left = left.right;
       left.right = node;
@@ -58,10 +58,10 @@
     }
     
     return node;
-  };
+  }
   
   function split(node) {
-    if (node !== null && node.right != null && node.right.right != null && node.level == node.right.right.level) {
+    if (node !== null && node.right !== null && node.right.right !== null && node.level == node.right.right.level) {
       var right = node.right;
       node.right = right.left;
       right.left = node;
@@ -70,7 +70,7 @@
     }
     
     return node;
-  };
+  }
   
   _w.insert = function(root, value, comparator, context) {
     var node = root, stack = [], parent;
@@ -117,15 +117,15 @@
     return split(skew(root));
   };
   
-  _w.delete = function(root, value, comparator, context) {
+  _w.remove = function(root, value, comparator, context) {
     var node = root, stack = [], target, parent;
     comparator = comparator || _.identity;
 
     while (true) {
-      if (node === null) return root;
+      if (node === null) { return root; }
       
       stack.push(node);
-      if (node.data == value) break;
+      if (node.data == value) { break; }
       
       if (comparator.call(context, value) < comparator.call(context, node.data)) {
         node = node.left;
@@ -183,13 +183,15 @@
         
         node = skew(node);
         node.right = skew(node.right);
-        if (node.right) node.right.right = skew(node.right.right);
+        if (node.right) {
+          node.right.right = skew(node.right.right);
+        }
         node = split(node);
         node.right = split(node.right);
         
         if (stack.length > 0) {
           if (parent.left === node) {
-            parent.left = node
+            parent.left = node;
           } else {
             parent.right = node;
           }
@@ -203,7 +205,7 @@
   
   var each = _w.each = _w.forEach = function(node, iterator, context) {
     var index = 0, stack = [];
-    if (node == null) return;
+    if (node === null) { return; }
     while (stack.length > 0 || node !== null) {
       if (node !== null) {
         stack.push(node);
@@ -220,38 +222,36 @@
     
   var reverse = _w.reverse = function(node, iterator, context) {
     var index = 0, stack = [];
-    if (node == null) return;
+    if (node === null) { return; }
     while (stack.length > 0 || node !== null) {
       if (node !== null) {
         stack.push(node);
         node = node.right;
       } else {
         node = stack.pop();
-        if (iterator.call(context, node.data, index++, node) === breaker) {
-          break;
-        }
+        if (iterator.call(context, node.data, index++, node) === breaker) { break; }
         node = node.left;
       }
     }
   };
   
-  _w.preorder = function (root, iterator, context) {
-    var stack = [root];
-    
-    if (root == null) return;
-    
-    for (var index = 0, node = root; stack.length > 0; index++, node = stack.pop()) {
-      if (iterator.call(context, node.data, index, root) === breaker) break;
-      if (node.left !== null) stack.push(node.left);
-      if (node.right !== null) stack.push(node.right);
+  _w.preorder = function (node, iterator, context) {
+    var index = 0, stack = [node];
+    if (node === null) { return; }
+    while (stack.length > 0) {
+      node = stack.pop();
+      if (node.right !== null) {
+        stack.push(node.right);
+      }
+      if (node.left !== null) {
+        stack.push(node.left);
+      }
+      if (iterator.call(context, node.data, index++, node) === breaker) { break; }
     }
-
-    return stack;
   };
   
   _w.map = function(tree, iterator, context) {
     var results = [];
-    
     each(tree, function(value, index, tree) {
       results.push(iterator.call(context, value, index, tree));
     });
@@ -262,28 +262,28 @@
   _w.reduce = _w.foldl = _w.inject = function(tree, iterator, memo, context) {
     var initial = memo !== void 0;
     each(tree, function(value, index, tree) {
-      if (!initial && index == 0) {
+      if (!initial && index === 0) {
         memo = value;
         initial = true;
       } else {
         memo = iterator.call(context, memo, value, index, tree);
       }
     });
-    if (!initial) throw new TypeError("Reduce of empty tree with no initial value");
+    if (!initial) { throw new TypeError("Reduce of empty tree with no initial value"); }
     return memo;
   };
   
   _w.reduceRight = _w.foldr = function(tree, iterator, memo, context) {
     var initial = memo !== void 0;
     reverse(tree, function(value, index, tree) {
-      if (!initial && index == 0) {
+      if (!initial && index === 0) {
         memo = value;
         initial = true;
       } else {
         memo = iterator.call(context, memo, value, index, tree);
       }
     });
-    if (!initial) throw new TypeError("Reduce of empty tree with no initial value");
+    if (!initial) { throw new TypeError("Reduce of empty tree with no initial value"); }
     return memo;
   };
   
@@ -300,7 +300,7 @@
   
   _w.filter = _w.select = function(tree, iterator, context) {
     var results = [];
-    if (tree == null) return results;
+    if (tree === null) { return results; }
     each(tree, function(value, index, tree) {
       if (iterator.call(context, value, index, tree)) {
         results.push(value);
@@ -311,7 +311,7 @@
   
   _w.reject = function(tree, iterator, context) {
     var results = [];
-    if (tree == null) return results;
+    if (tree === null) { return results; }
     each(tree, function(value, index, tree) {
       if (!iterator.call(context, value, index, tree)) {
         results.push(value);
@@ -323,11 +323,10 @@
   _w.every = _w.all = function(tree, iterator, context) {
     iterator = iterator || _.identity;
     var result = true;
-    if (tree == null) return result;
+    if (tree === null) { return result; }
     each(tree, function(value, index, tree) {
-      if (!(result = result && iterator.call(context, value, index, tree))) {
-        return breaker;
-      }
+      result = result && iterator.call(context, value, index, tree);
+      if (!result) { return breaker; }
     });
     return result;
   };
@@ -335,20 +334,20 @@
   var any = _w.some = _w.any = function(tree, iterator, context) {
     iterator = iterator || _.identity;
     var result = false;
-    if (tree == null) return result;
+    if (tree === null) { return result; }
     each(tree, function(value, index, tree) {
-      if (result = iterator.call(context, value, index, tree)) {
-        return breaker;
-      }
+      result = iterator.call(context, value, index, tree);
+      if (result) { return breaker; }
     });
     return result;
   };
   
   _w.include = _w.contains = function(tree, target) {
     var found = false;
-    if (target == null) return found;
+    if (target === null) { return found; }
     any(tree, function(value) {
-      if (found = (value === target)) return true;
+      found = (value === target);
+      if (found) { return true; }
     });
     return found;
   };
@@ -391,43 +390,45 @@
   };
   
   _w.toArray = function(tree) {
-    if (!tree) return [];
+    if (!tree) { return []; }
     return _w.values(tree);
   };
   
   _w.size = function(tree) {
-    if (!tree) { return 0; }
     var size = 0;
+    if (!tree) { return size; }
     each(tree, function() { size++; });
     return size;
   };
   
   _w.first = _w.head = function(tree, n, guard) {
     var results = [];
-    if (!tree) return results;
+    if (!tree) { return results; }
     if (n === undefined || !!guard) {
-      while (tree.left !== null) tree = tree.left;
+      while (tree.left !== null) { tree = tree.left; }
       return tree.data;
     }
     each(tree, function(value, index) {
-      if (n <= index) return breaker;
+      if (n <= index) { return breaker; }
       results.push(value);
     });
     return results;
   };
   
   _w.last = function(tree) {
-    if (!tree) return null;
-    while (tree.right !== null) tree = tree.right;
+    if (!tree) { return null; }
+    while (tree.right !== null) { tree = tree.right; }
     return tree.data;
   };
   
   _w.rest = _w.tail = function(tree, n, guard) {
     var results = [], start = _.isUndefined(n) || guard ? 1 : n;
-    if (!tree) return results;
+    if (!tree) { return results; }
     if (start === 0) { return _w.toArray(tree); }
     each(tree, function(value, index) {
-      if (start <= index) results.push(value);
+      if (start <= index) {
+        results.push(value);
+      }
     });
     return results;
   };
@@ -439,7 +440,7 @@
   
   _w.indexOf = function(tree, item) {
     var position = -1;
-    if (tree == null) return position;
+    if (tree === null) { return position; }
     each(tree, function(value, index) {
       if (value == item) {
         position = index;
@@ -451,7 +452,7 @@
   
   _w.lastIndexOf = function(tree, item) {
     var position = -1;
-    if (tree == null) return position;
+    if (tree === null) { return position; }
     reverse(tree, function(value, index) {
       if (value == item) {
         position = index;
@@ -467,7 +468,7 @@
   
   _w.values = function(tree) {
     var result = [];
-    if (tree === null) return result;
+    if (tree === null) { return result; }
     each(tree, function(value) {
       result.push(value);
     });
@@ -475,10 +476,10 @@
   };
   
   _w.search = function(tree, comparator, context) {
-    if (tree == null || !comparator) return null;
-    while (tree.level != 0) {
+    if (tree === null || !comparator) { return null; }
+    while (tree.level !== 0) {
       var comparison = comparator.call(context, tree.data);
-      if (comparison == 0) {
+      if (comparison === 0) {
         return tree.data;
       } else if (comparison < 0) {
         tree = tree.left;
