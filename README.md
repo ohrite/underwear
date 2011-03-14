@@ -8,8 +8,8 @@
                                                                              \ \____/      
                                                                               \/___/       
 
-Underwear is a girdle for Underscore's utility-belt library.  It provides
-support for (some of) the functional stuff (each, map, reduce, filter...)
-while supporting a O(log n) data structure.
+    Underwear is a girdle for Underscore's utility-belt library.  It provides
+    support for (some of) the functional stuff (each, map, reduce, filter...)
+    while supporting a O(log n) data structure.
 
-Currently, this O(log n) structure is an AA tree.  It will soon become a skip list.
+    Currently, this O(log n) structure is an AA tree, soon to be a skip list.
